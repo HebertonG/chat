@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Chat</title>
+
+    <!--Add o jquery-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!--Add o socket.io-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+
+<body>
+    <form id="chat">
+        <!--nome do autor da mensagem-->
+        <input type="text" name="username" placeholder="Digite deu usuario">
+        <!--Div com todas as menssagens-->
+        <div class="messages"></div>
+        <!--nome da mensagem-->
+        <input type="text" name="message" placeholder="Digite deu mensagem">
+        <button type="submit">Enviar</button>
+    </form>
+
+    <script type="text/javascript">
+        //conectando com socket do backend(server.js)
+        //como o socket ta no mesmo esdereço pode usar a mesma url
+        var socket = io('http://localhost:3000');
+
+        //aparecer a mensagem para quem enviou
+        function renderMessage(message) {
+            $('.messages').append('<div class="message"><strong>' + message.author + '</strong>: ' + message.message + '</div>');
+        }
+
+        socket.on('previousMessages', function(messages) {
+            for (message of messages) {
+                renderMessage(message);
+            }
+        })
+
+        //recebe do socket.broadcast.emit e repassa para ser renderizada
+        socket.on('receivedMessage', function(message) {
+            renderMessage(message);
+        });
+
+        //parte de mandar mensagem
+        //verificar quando chat é submitado
+        $('#chat').submit(function(event) {
+            event.preventDefault();
+
+            //o nome e a mensagens enviada 
+            var author = $('input[name=username]').val();
+            var message = $('input[name=message]').val();
+
+            //verrificando se ome e a mensagem foi preenchido
+            if (author.length && message.length) {
+                //criando um objeto para ser enviado
+                var messageObject = {
+                    author: author,
+                    message: message,
+                };
+
+
+                renderMessage(messageObject);
+
+                //enviando para o backend
+                socket.emit('sendMessage', messageObject);
+            };
+
+
+        })
+    </script>
+</body>
+
+</html>
