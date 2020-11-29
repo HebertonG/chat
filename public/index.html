@@ -37,6 +37,7 @@
             $('.messages').append('<div class="message"><strong>' + message.author + '</strong>: ' + message.message + '</div>');
         }
 
+        //for para mostrar as mensagens antigas da conversa para quem acabou de entrar, puxando do backend
         socket.on('previousMessages', function(messages) {
             for (message of messages) {
                 renderMessage(message);

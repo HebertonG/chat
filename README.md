@@ -1,4 +1,3 @@
-# chat
 instala dentro da pasta chat
 npm install
 

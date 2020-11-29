@@ -29,6 +29,7 @@ io.on('connection', socket => {
     //passa `Socket conectado` com o id
     console.log(`Socket conectado: ${socket.id}`);
 
+    //emvia todaos as mensagens da conversa para quem acabou de entrar
     socket.emit('previousMessages', messages);
 
     //recebe e trata a mensagem
